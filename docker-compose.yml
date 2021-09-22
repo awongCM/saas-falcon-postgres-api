@@ -12,7 +12,7 @@ services:
        - db
        - redis
     environment:
-       DEBUG: True
+       DEBUG: "True"
        SECRET_KEY: ubersecretkey
   db:
     image: postgres
