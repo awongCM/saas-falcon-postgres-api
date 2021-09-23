@@ -1,5 +1,5 @@
 FROM python:3.8
-LABEL maintainer="Andy Chee Ming Wong"
+LABEL maintainer="Andy Chee Ming Wong <awong.cm@gmail.com>"
 
 WORKDIR /src/app
 COPY . .
