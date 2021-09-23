@@ -3,6 +3,7 @@ version: '3.9'
 services:
   api:
     build: .
+    image: api
     command: gunicorn --reload -b 0.0.0.0:5000 app:api
     volumes:
        - .:/src/app
@@ -27,16 +28,18 @@ services:
     ports:
        - "6379:6379"
     volumes:
-       - "redis:/data"
+       - redis:/data
   worker:
-    build: .
-    command: celery worker -B -l info -A somesaas.celery.tasks
-    links:
+    image: api
+    command: celery -A tasks worker --loglevel=INFO
+    environment:
+       CELERY_BROKER: ${CELERY_BROKER}
+       CELERY_BACKEND: ${CELERY_BACKEND}
+    depends_on:
        - redis 
-       - db
        - api
     volumes:
-       - "worker:/data"
+       - .:/src/app
 
 volumes:
   redis: {}
