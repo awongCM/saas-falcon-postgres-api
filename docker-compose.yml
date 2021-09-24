@@ -4,7 +4,7 @@ services:
   api:
     build: .
     image: api
-    command: gunicorn --reload -b 0.0.0.0:5000 api:api
+    command: gunicorn --reload -b 0.0.0.0:5000 api:api --log-level debug
     volumes:
       - .:/src/app
     ports:
@@ -13,6 +13,8 @@ services:
       - db
       - redis
     environment:
+      CELERY_BROKER: ${CELERY_BROKER}
+      CELERY_BACKEND: ${CELERY_BACKEND}
       SECRET_KEY: ${SECRET_KEY}
   db:
     image: postgres
