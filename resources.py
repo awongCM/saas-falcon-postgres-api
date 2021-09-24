@@ -13,3 +13,15 @@ class BaseResource:
         resp.text = json.dumps(doc, ensure_ascii=False)
 
         resp.status = falcon.HTTP_200
+
+
+class FooBarResource:
+
+    def on_get(self, req, resp):
+        doc = {
+            "message": "My foobar resource"
+        }
+
+        resp.text = json.dumps(doc, ensure_ascii=False)
+
+        resp.status = falcon.HTTP_200

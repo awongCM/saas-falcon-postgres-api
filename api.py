@@ -1,6 +1,6 @@
 import falcon
 
-from base import BaseResource
+from resources import BaseResource
 
 api = falcon.App()
 
