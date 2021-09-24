@@ -4,7 +4,7 @@ services:
   api:
     build: .
     image: api
-    command: gunicorn --reload -b 0.0.0.0:5000 app:api
+    command: gunicorn --reload -b 0.0.0.0:5000 api:api
     volumes:
       - .:/src/app
     ports:
