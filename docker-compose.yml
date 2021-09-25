@@ -33,7 +33,7 @@ services:
       - redis:/data
   worker:
     image: api
-    command: celery -A tasks worker --loglevel=INFO
+    command: celery -A tasks worker --loglevel=INFO --logfile=logs/celery.log
     environment:
       CELERY_BROKER: ${CELERY_BROKER}
       CELERY_BACKEND: ${CELERY_BACKEND}
@@ -42,6 +42,7 @@ services:
       - api
     volumes:
       - .:/src/app
+      - ./logs:/src/app/logs
 
 volumes:
   redis: {}
