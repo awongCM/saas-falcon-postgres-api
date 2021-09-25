@@ -1,6 +1,0 @@
-[2021-09-25 04:57:34,833: INFO/MainProcess] Connected to redis://redis:6379/0
-[2021-09-25 04:57:34,844: INFO/MainProcess] mingle: searching for neighbors
-[2021-09-25 04:57:35,898: INFO/MainProcess] mingle: all alone
-[2021-09-25 04:57:35,939: INFO/MainProcess] celery@d13e4e4fbe35 ready.
-[2021-09-25 04:59:48,189: INFO/MainProcess] Received task: tasks.fib[a83d5427-9393-40a0-a5ce-bcf97c106a1a]  
-[2021-09-25 04:59:56,231: INFO/ForkPoolWorker-1] Task tasks.fib[a83d5427-9393-40a0-a5ce-bcf97c106a1a] succeeded in 8.030896000011126s: [0, 1, 1, 2, 3]
