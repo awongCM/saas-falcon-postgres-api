@@ -6,7 +6,7 @@ services:
     image: api
     command: gunicorn --reload -b 0.0.0.0:5000 api:api --log-level debug
     volumes:
-      - .:/src/app
+      - ./app:/src/app
     ports:
       - "5000:5000"
     links:
@@ -33,7 +33,7 @@ services:
       - redis:/data
   worker:
     image: api
-    command: celery -A tasks worker --loglevel=INFO --logfile=logs/celery.log
+    command: celery -A tasks worker --loglevel=INFO --logfile=../logs/celery.log
     environment:
       CELERY_BROKER: ${CELERY_BROKER}
       CELERY_BACKEND: ${CELERY_BACKEND}
@@ -41,8 +41,8 @@ services:
       - redis 
       - api
     volumes:
-      - .:/src/app
-      - ./logs:/src/app/logs
+      - ./app:/src/app
+      - ./logs:/src/logs
   monitor:
     image: api
     ports:

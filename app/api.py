@@ -2,6 +2,7 @@ import falcon
 
 from resources import BaseResource, WorkerResource, WorkerStatusResource
 
+
 api = falcon.App()
 
 base = BaseResource()
