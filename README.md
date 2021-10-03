@@ -2,5 +2,5 @@
 Project SAAS weekend
 
 # TODOS to go here...
-Learning Notes here - https://testdriven.io/blog/asynchronous-tasks-with-falcon-and-celery/
+My Learning Notes here - https://testdriven.io/blog/asynchronous-tasks-with-falcon-and-celery/
 And add some property folder architecture structure...
