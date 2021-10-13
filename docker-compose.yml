@@ -4,6 +4,7 @@ services:
   api:
     build: .
     image: api
+    container_name: ${API_HOSTNAME}
     command: gunicorn --reload -b 0.0.0.0:5000 api:api --log-level debug
     volumes:
       - ./app:/src/app
@@ -19,7 +20,7 @@ services:
   db:
     image: postgres
     restart: always
-    container_name: db
+    container_name: ${POSTGRES_HOSTNAME}
     ports:
       - "5432:5432"
     environment:
@@ -28,12 +29,14 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
   redis:
     image: redis
+    container_name: ${BROKER_HOSTNAME}
     ports:
       - "6379:6379"
     volumes:
       - redis:/data
   worker:
     image: api
+    container_name: ${CELERY_HOSTNAME}
     command: celery -A tasks worker --loglevel=INFO --logfile=../logs/celery.log
     environment:
       CELERY_BROKER: ${CELERY_BROKER}
@@ -46,6 +49,7 @@ services:
       - ./logs:/src/logs
   monitor:
     image: api
+    container_name: ${MONITOR_HOSTNAME}
     ports:
       - "5555:5555"
     command:  flower -A tasks --port=5555 --broker=${CELERY_BROKER}
