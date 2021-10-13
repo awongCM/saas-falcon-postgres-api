@@ -1,9 +1,13 @@
 import falcon
 
 from resources import BaseResource, WorkerResource, WorkerStatusResource
+from middlewares import SQLAlchemySessionManager
+from database import Session
 
 
-api = falcon.App()
+api = falcon.App(middleware=[
+    SQLAlchemySessionManager(Session)
+])
 
 base = BaseResource()
 worker = WorkerResource()

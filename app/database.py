@@ -1,0 +1,10 @@
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, scoped_session
+
+conn_url = "postgresql+psycopg2://admin:password01@db:5432/sass-db"
+
+engine = create_engine(conn_url, pool_size=100, echo=False)
+
+session_factory = sessionmaker(bind=engine)
+
+Session = scoped_session(session_factory)
