@@ -1,7 +1,8 @@
 
+# TODO - temp import setup
 import falcon
 
-# https://eshlox.net/2017/07/28/integrate-sqlalchemy-with-falcon-framework
+# Credit - https://eshlox.net/2017/07/28/integrate-sqlalchemy-with-falcon-framework
 
 
 class SQLAlchemySessionManager:

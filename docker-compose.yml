@@ -10,7 +10,7 @@ services:
       - ./app:/src/app
     ports:
       - "5000:5000"
-    links:
+    depends_on:
       - db
       - redis
     environment:
