@@ -1,5 +1,13 @@
 # saas-falcon-postgres-api
 Project SAAS weekend with Falcon Restful API services
 # TODOS to go here...
+Learning Notes:
 
-My Learning Notes here - https://testdriven.io/blog/asynchronous-tasks-with-falcon-and-celery/
+* Falcon
+* Postgres
+* Redis
+* Celery
+* SQLAlchemy
+* Marshmallow
+
+Notes on using Celery queue here - https://testdriven.io/blog/asynchronous-tasks-with-falcon-and-celery/
