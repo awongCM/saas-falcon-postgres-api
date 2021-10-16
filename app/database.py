@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
-from settings import POSTGRESQL_DB
+from config import POSTGRESQL_DB
 
 from models import Base
 
