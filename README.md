@@ -9,5 +9,6 @@ Learning Notes:
 * Celery
 * SQLAlchemy
 * Marshmallow
+* Alembic
 
 Notes on using Celery queue here - https://testdriven.io/blog/asynchronous-tasks-with-falcon-and-celery/
