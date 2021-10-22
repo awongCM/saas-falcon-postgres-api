@@ -1,7 +1,6 @@
 # saas-falcon-postgres-api
 Project SAAS weekend with Falcon Restful API services
-# TODOS to go here...
-Learning Notes:
+# Ingredients
 
 * Falcon
 * Postgres
