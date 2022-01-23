@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from config import POSTGRESQL_DB
 
-from models import Base
+from models import (Base)
 
 conn_url = '{engine}://{username}:{password}@{host}:5432/{db}'.format(
     **POSTGRESQL_DB)

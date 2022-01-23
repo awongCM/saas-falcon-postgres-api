@@ -1,7 +1,3 @@
-# TODO - need to find out why this import pattern doesn't work properly for middlewares
-# from . import (SQLAlchemySessionManager)
-
-# __all__ = ['SQLAlchemySessionManager']
 
 # TODO - temp import setup
 import falcon

@@ -1,4 +1,3 @@
-# TODO - temp import setup
 import os
 from time import sleep
 
