@@ -1,5 +1,4 @@
 
-# TODO - temp import setup
 import falcon
 
 # Credit - https://eshlox.net/2017/07/28/integrate-sqlalchemy-with-falcon-framework
