@@ -1,41 +1,38 @@
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock
 
 from falcon import testing
 
-from ..api import api as app
-import tasks
+from api import api as app
+from middlewares import SQLAlchemySessionManager
 
 
-class TestAPIRoute(testing.TestCase):
+class TestHealthEndpoint(testing.TestCase):
 
     def setUp(self):
-        super(TestAPIRoute, self).setUp()
+        super().setUp()
         self.app = app
+        self.mock_session = MagicMock()
+        self.mock_session.query.return_value.count.return_value = 3
+        self.original_process_resource = SQLAlchemySessionManager.process_resource
 
-    def test_base_endpoint(self):
-        expected = {
-            "message": "hello to sass-falcon-postgres-api"
-        }
+        def inject_session(middleware, req, resp, resource, params):
+            resource.session = self.mock_session
+
+        SQLAlchemySessionManager.process_resource = inject_session
+
+    def tearDown(self):
+        SQLAlchemySessionManager.process_resource = self.original_process_resource
+        super().tearDown()
+
+    def test_health_endpoint(self):
         result = self.simulate_get('/')
-        self.assertEqual(result.json, expected)
 
-
-class TestWorkerTasks(testing.TestCase):
-    def setUp(self):
-        super(TestWorkerTasks, self).setUp()
-        self.app = app
-
-    @patch('tasks.fib')
-    def test_mock_tasks_fib(self, mock_fib):
-        mock_fib.run.return_value = []
-        self.assertEqual(tasks.fib.run(-1), [])
-        mock_fib.run.return_value = [0, 1, 1]
-        self.assertEqual(tasks.fib.run(2), [0, 1, 1])
-        mock_fib.run.return_value = [0, 1, 1, 2, 3]
-        self.assertEqual(tasks.fib.run(4), [0, 1, 1, 2, 3])
-        mock_fib.run.return_value = [0, 1, 1, 2, 3, 5]
-        self.assertEqual(tasks.fib.run(5), [0, 1, 1, 2, 3, 5])
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(result.json['service'], 'email-domain-validator')
+        self.assertEqual(result.json['status'], 'ok')
+        self.assertEqual(result.json['stats']['validation_jobs_total'], 3)
+        self.assertIn('POST /validate', result.json['endpoints']['queue_validation'])
 
 
 if __name__ == '__main__':

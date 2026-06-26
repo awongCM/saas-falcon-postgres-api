@@ -1,4 +1,4 @@
-1. Alembic + Docker migration combos
-2. Dockerfile context
-3. Python import setup __init__.py
-4. Add more pytest unit test suites
+1. Expand disposable domain list
+2. Add bulk validation endpoint for pasted recruiter email lists
+3. Add SMTP mailbox verification (optional, slower)
+4. Alembic migration for validation_jobs table

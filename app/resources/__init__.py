@@ -1,15 +1,11 @@
 from . import (
-    BaseResource,
+    HealthResource,
     ValidationResource,
     ValidationStatusResource,
-    WorkerResource,
-    WorkerStatusResource,
 )
 
 __all__ = [
-    'BaseResource',
+    'HealthResource',
     'ValidationResource',
     'ValidationStatusResource',
-    'WorkerResource',
-    'WorkerStatusResource',
 ]
