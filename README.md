@@ -22,6 +22,20 @@ chmod +x validate_poc.bash
 ./validate_poc.bash
 ```
 
+## Run in Cursor Cloud Agent
+
+This repo includes `.cursor/environment.json` and `.cursor/Dockerfile` for cloud
+agent testing with Docker Compose.
+
+1. Start a cloud agent on this branch (do not use an old saved snapshot that
+   overrides the Dockerfile config).
+2. Wait for the `app-stack` terminal to finish building and start services.
+3. Run the end-to-end smoke test:
+
+```bash
+bash .cursor/cloud-test.sh
+```
+
 Flower monitor: http://localhost:5555
 
 ## Example
