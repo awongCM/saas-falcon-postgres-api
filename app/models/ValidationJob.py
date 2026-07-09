@@ -1,8 +1,12 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import Column, DateTime, Integer, String, Text
 
 from .Base import Base
+
+
+def utcnow():
+    return datetime.now(timezone.utc)
 
 
 class ValidationJob(Base):
@@ -14,10 +18,10 @@ class ValidationJob(Base):
     input_value = Column(String(512), nullable=False)
     status = Column(String(32), nullable=False, default='PENDING')
     result = Column(Text)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=utcnow, nullable=False)
     updated_at = Column(
-        DateTime,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow,
+        DateTime(timezone=True),
+        default=utcnow,
+        onupdate=utcnow,
         nullable=False,
     )

@@ -2,6 +2,7 @@
 set -euo pipefail
 
 API_URL="${API_URL:-http://localhost:5000}"
+API_KEY="${API_KEY:-dev-local-api-key}"
 MAX_ATTEMPTS="${MAX_ATTEMPTS:-60}"
 SLEEP_SECONDS="${SLEEP_SECONDS:-5}"
 

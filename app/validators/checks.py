@@ -56,6 +56,12 @@ class EmailChecks:
     role_account: bool = False
 
 
+def _is_disposable_domain(domain: str) -> bool:
+    if domain in DISPOSABLE_DOMAINS:
+        return True
+    return any(domain.endswith(f'.{disposable}') for disposable in DISPOSABLE_DOMAINS)
+
+
 def _query_records(domain: str, record_type: str) -> List[str]:
     resolver = dns.resolver.Resolver()
     resolver.lifetime = DNS_TIMEOUT_SECONDS
@@ -82,6 +88,9 @@ def _query_records(domain: str, record_type: str) -> List[str]:
 def validate_domain(domain: str) -> dict:
     normalized = domain.strip().lower().rstrip('.')
     checks = DomainChecks(domain=normalized, format_valid=bool(normalized and '.' in normalized))
+
+    if '@' in normalized:
+        checks.format_valid = False
 
     if not checks.format_valid:
         return _build_domain_result(checks)
@@ -112,12 +121,13 @@ def validate_email(email: str) -> dict:
     if not checks.format_valid:
         return _build_email_result(checks)
 
-    checks.disposable_domain = domain in DISPOSABLE_DOMAINS
+    domain_result = validate_domain(domain)
+    checks.disposable_domain = _is_disposable_domain(domain)
     checks.free_email_provider = domain in FREE_EMAIL_DOMAINS
     checks.role_account = local_part in ROLE_LOCAL_PARTS
-    checks.domain_checks = DomainChecks(**validate_domain(domain)['checks'])
+    checks.domain_checks = DomainChecks(**domain_result['checks'])
 
-    return _build_email_result(checks)
+    return _build_email_result(checks, domain_result=domain_result)
 
 
 def _build_domain_result(checks: DomainChecks) -> dict:
@@ -164,10 +174,8 @@ def _build_domain_result(checks: DomainChecks) -> dict:
     }
 
 
-def _build_email_result(checks: EmailChecks) -> dict:
-    domain_result = validate_domain(checks.domain) if checks.format_valid else None
+def _build_email_result(checks: EmailChecks, domain_result=None) -> dict:
     domain_checks = checks.domain_checks or DomainChecks(domain=checks.domain)
-
     score = domain_result['score'] if domain_result else 0
     signals = list(domain_result['signals']) if domain_result else []
 
@@ -177,7 +185,7 @@ def _build_email_result(checks: EmailChecks) -> dict:
     else:
         if checks.disposable_domain:
             score = min(score, 15)
-            signals.append('Disposable/temporary email domain detected')
+            signals.insert(0, 'Disposable/temporary email domain detected — treat as high risk')
 
         if checks.free_email_provider:
             score -= 10
@@ -226,7 +234,7 @@ def _recommendation(
     free_provider: bool = False,
 ) -> str:
     if disposable:
-        return 'High risk — likely a throwaway email address'
+        return 'High risk — likely a throwaway email address despite any mail DNS records'
     if score >= 80:
         return 'Likely legitimate — domain appears configured for real email'
     if score >= 60:

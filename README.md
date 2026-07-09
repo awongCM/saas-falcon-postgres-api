@@ -9,9 +9,13 @@ Built with Falcon, Postgres, Redis, Celery, SQLAlchemy, and dnspython.
 | Method | Path | Description |
 | --- | --- | --- |
 | `GET` | `/` | Service health and endpoint summary |
-| `POST` | `/validate` | Queue validation job (`{"type":"email|domain","value":"..."}`) |
-| `GET` | `/validate/{job_id}` | Poll job status and validation result |
-| `GET` | `/validate?limit=20` | List recent validation jobs |
+| `POST` | `/validate` | Queue validation job (`X-API-Key` required) |
+| `GET` | `/validate/{job_id}` | Poll job status and validation result (`X-API-Key` required) |
+| `GET` | `/validate?limit=20` | List recent validation jobs (`X-API-Key` required) |
+
+Set `API_KEY` in `.env`. Optional `RATE_LIMIT_PER_MINUTE` defaults to `30`.
+
+Database migrations run automatically on API startup via Alembic.
 
 ## Run locally
 
@@ -45,9 +49,10 @@ curl http://localhost:5000/
 
 curl -X POST http://localhost:5000/validate \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: dev-local-api-key" \
   -d '{"type":"email","value":"recruiter@acme.com"}'
 
-curl http://localhost:5000/validate/1
+curl -H "X-API-Key: dev-local-api-key" http://localhost:5000/validate/1
 ```
 
 ## What gets checked

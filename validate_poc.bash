@@ -2,6 +2,7 @@
 set -euo pipefail
 
 API_URL="${API_URL:-http://localhost:5000}"
+API_KEY="${API_KEY:-dev-local-api-key}"
 
 echo "=== Email/Domain Validator POC ==="
 echo "API: $API_URL"
@@ -15,6 +16,7 @@ run_validation() {
 
   response=$(curl -s -X POST "$API_URL/validate" \
     -H "Content-Type: application/json" \
+    -H "X-API-Key: $API_KEY" \
     -d "{\"type\":\"$type\",\"value\":\"$value\"}")
 
   echo "Queued: $response"
@@ -24,7 +26,7 @@ run_validation() {
 
   while [ "$status" != "SUCCESS" ] && [ "$status" != "FAILURE" ]; do
     sleep 1
-    result=$(curl -s "$API_URL/validate/$job_id")
+    result=$(curl -s -H "X-API-Key: $API_KEY" "$API_URL/validate/$job_id")
     status=$(echo "$result" | jq -r '.data.status')
     echo "Status: $status"
   done
@@ -39,4 +41,4 @@ run_validation "domain" "stripe.com"
 run_validation "domain" "this-domain-should-not-exist-12345.invalid"
 
 echo "=== Recent validation jobs ==="
-curl -s "$API_URL/validate?limit=5" | jq .
+curl -s -H "X-API-Key: $API_KEY" "$API_URL/validate?limit=5" | jq .

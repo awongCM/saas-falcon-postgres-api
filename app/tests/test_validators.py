@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from validators.checks import validate_domain, validate_email
+from validators.checks import validate_domain, validate_email, _is_disposable_domain
 
 
 class TestEmailValidator(unittest.TestCase):
@@ -18,15 +18,44 @@ class TestEmailValidator(unittest.TestCase):
         self.assertTrue(result['checks']['disposable_domain'])
         self.assertIn('throwaway', result['recommendation'].lower())
 
+    def test_disposable_subdomain_is_flagged(self):
+        self.assertTrue(_is_disposable_domain('foo.mailinator.com'))
+        result = validate_email('someone@foo.mailinator.com')
+        self.assertTrue(result['checks']['disposable_domain'])
+
     def test_free_provider_is_noted(self):
         result = validate_email('recruiter@gmail.com')
         self.assertTrue(result['checks']['free_email_provider'])
+
+    @patch('validators.checks.validate_domain')
+    def test_email_validation_queries_domain_once(self, mock_validate_domain):
+        mock_validate_domain.return_value = {
+            'score': 80,
+            'signals': ['Mail exchange (MX) records found'],
+            'checks': {
+                'domain': 'acme.com',
+                'format_valid': True,
+                'a_records': ['1.1.1.1'],
+                'mx_records': ['mx.acme.com'],
+                'has_spf': True,
+                'has_dmarc': True,
+                'dns_error': None,
+            },
+        }
+
+        validate_email('recruiter@acme.com')
+        self.assertEqual(mock_validate_domain.call_count, 1)
 
 
 class TestDomainValidator(unittest.TestCase):
 
     def test_invalid_domain_format(self):
         result = validate_domain('notadomain')
+        self.assertFalse(result['is_likely_legit'])
+        self.assertEqual(result['score'], 0)
+
+    def test_domain_with_at_sign_is_invalid(self):
+        result = validate_domain('user@acme.com')
         self.assertFalse(result['is_likely_legit'])
         self.assertEqual(result['score'], 0)
 
