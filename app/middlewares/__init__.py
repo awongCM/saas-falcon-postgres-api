@@ -1,12 +1,8 @@
-# TODO - need to find out why this import pattern doesn't work properly for middlewares
-# from . import (SQLAlchemySessionManager)
+import logging
 
-# __all__ = ['SQLAlchemySessionManager']
-
-# TODO - temp import setup
 import falcon
 
-# Credit - https://eshlox.net/2017/07/28/integrate-sqlalchemy-with-falcon-framework
+logger = logging.getLogger(__name__)
 
 
 class SQLAlchemySessionManager:
@@ -18,17 +14,19 @@ class SQLAlchemySessionManager:
         self.Session = Session
 
     def process_resource(self, req, resp, resource, params):
-
         resource.session = self.Session()
 
     def process_response(self, req, resp, resource, req_succeeded):
+        session = getattr(resource, 'session', None)
+        if session is None:
+            logger.error('SQLAlchemy session missing on resource %s', resource)
+            raise falcon.HTTPInternalServerError(
+                title='SQLAlchemySessionManager error encountered',
+                description='Resource session is not valid!',
+            )
 
         try:
             if not req_succeeded:
-                resource.session.rollback()
-
+                session.rollback()
+        finally:
             self.Session.remove()
-        except:
-            print('A session was not found!')
-            raise falcon.HTTPInternalServerError(
-                'SQLAlchemySessionManager error encountered', 'Resource session is not valid!')

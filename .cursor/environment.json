@@ -1,0 +1,15 @@
+{
+  "name": "email-domain-validator",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "install": "bash .cursor/cloud-install.sh",
+  "start": "sudo service docker start",
+  "terminals": [
+    {
+      "name": "app-stack",
+      "command": "bash .cursor/cloud-start-stack.sh"
+    }
+  ]
+}

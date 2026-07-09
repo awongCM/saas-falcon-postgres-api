@@ -1,6 +1,10 @@
 import falcon
 
-from resources import (BaseResource, WorkerResource, WorkerStatusResource)
+from resources import (
+    HealthResource,
+    ValidationResource,
+    ValidationStatusResource,
+)
 from middlewares import (SQLAlchemySessionManager)
 from database import Session
 
@@ -9,10 +13,10 @@ api = falcon.App(middleware=[
     SQLAlchemySessionManager(Session)
 ])
 
-base = BaseResource
-worker = WorkerResource
-workerStatus = WorkerStatusResource
+health = HealthResource
+validation = ValidationResource
+validationStatus = ValidationStatusResource
 
-api.add_route('/', base)
-api.add_route('/start_worker', worker)
-api.add_route('/status/{task_id}', workerStatus)
+api.add_route('/', health)
+api.add_route('/validate', validation)
+api.add_route('/validate/{job_id}', validationStatus)

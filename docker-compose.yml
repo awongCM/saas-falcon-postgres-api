@@ -5,11 +5,15 @@ services:
     build: .
     image: api
     container_name: ${API_HOSTNAME}
-    command: gunicorn --reload -b 0.0.0.0:5000 api:api --log-level debug
+    command: sh -c "cd /src && alembic upgrade head && cd app && gunicorn --reload -b 0.0.0.0:5000 api:api --log-level debug"
     volumes:
       - ./app:/src/app
+      - ./alembic:/src/alembic
+      - ./alembic.ini:/src/alembic.ini
     ports:
       - "5000:5000"
+    env_file:
+      - .env
     depends_on:
       - db
       - redis
@@ -17,6 +21,12 @@ services:
       CELERY_BROKER: ${CELERY_BROKER}
       CELERY_BACKEND: ${CELERY_BACKEND}
       SECRET_KEY: ${SECRET_KEY}
+      API_KEY: ${API_KEY}
+      RATE_LIMIT_PER_MINUTE: ${RATE_LIMIT_PER_MINUTE:-30}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOSTNAME: ${POSTGRES_HOSTNAME}
   db:
     image: postgres
     restart: always
@@ -38,11 +48,18 @@ services:
     image: api
     container_name: ${CELERY_HOSTNAME}
     command: celery -A tasks worker --loglevel=INFO --logfile=../logs/celery.log
+    env_file:
+      - .env
     environment:
       CELERY_BROKER: ${CELERY_BROKER}
       CELERY_BACKEND: ${CELERY_BACKEND}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOSTNAME: ${POSTGRES_HOSTNAME}
     depends_on:
-      - redis 
+      - redis
+      - db
       - api
     volumes:
       - ./app:/src/app
@@ -52,7 +69,9 @@ services:
     container_name: ${MONITOR_HOSTNAME}
     ports:
       - "5555:5555"
-    command:  flower -A tasks --port=5555 --broker=${CELERY_BROKER}
+    command: flower -A tasks --port=5555 --broker=${CELERY_BROKER}
+    env_file:
+      - .env
     depends_on:
       - api
       - redis

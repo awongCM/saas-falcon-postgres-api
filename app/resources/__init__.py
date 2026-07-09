@@ -1,3 +1,11 @@
-from . import (BaseResource, WorkerResource, WorkerStatusResource)
+from . import (
+    HealthResource,
+    ValidationResource,
+    ValidationStatusResource,
+)
 
-__all__ = ['BaseResource', 'WorkerResource', 'WorkerStatusResource']
+__all__ = [
+    'HealthResource',
+    'ValidationResource',
+    'ValidationStatusResource',
+]
